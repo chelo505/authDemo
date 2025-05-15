@@ -85,8 +85,8 @@ export default {
       passwordError.value = '';
       confirmPasswordError.value = '';
       
-      if (!email.value) {
-        emailError.value = 'Email is required';
+      if (!email.value || !email.value.includes('@')) {
+        emailError.value = 'Enter valid email';
         isValid = false;
       }
       
