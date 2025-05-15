@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-app-bar color="primary">
-      <v-app-bar-title>Auth & Payment Demo</v-app-bar-title>
+      <v-app-bar-title>Authentication Demo</v-app-bar-title>
       
       <v-spacer></v-spacer>
       
@@ -11,13 +11,6 @@
           :to="{ name: 'Dashboard' }"
         >
           Dashboard
-        </v-btn>
-        
-        <v-btn
-          variant="text"
-          :to="{ name: 'Payment' }"
-        >
-          Make Payment
         </v-btn>
         
         <v-btn

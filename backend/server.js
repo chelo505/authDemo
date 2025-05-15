@@ -1,7 +1,6 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const paypal = require('@paypal/checkout-server-sdk');
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
@@ -27,13 +26,6 @@ const UserSchema = new mongoose.Schema({
 });
 
 const User = mongoose.model('User', UserSchema);
-
-// PayPal configuration
-const environment = new paypal.core.SandboxEnvironment(
-  process.env.PAYPAL_CLIENT_ID,
-  process.env.PAYPAL_CLIENT_SECRET
-);
-const client = new paypal.core.PayPalHttpClient(environment);
 
 // Auth routes
 app.post('/api/auth/register', async (req, res) => {
@@ -97,45 +89,6 @@ app.post('/api/auth/login', async (req, res) => {
   } catch (error) {
     console.error('Login error:', error);
     res.status(500).json({ message: 'Server error' });
-  }
-});
-
-// Payment routes
-app.post('/api/payment/create-order', async (req, res) => {
-  try {
-    const { amount } = req.body;
-    
-    const request = new paypal.orders.OrdersCreateRequest();
-    request.prefer("return=representation");
-    request.requestBody({
-      intent: 'CAPTURE',
-      purchase_units: [{
-        amount: {
-          currency_code: 'USD',
-          value: amount.toString()
-        }
-      }]
-    });
-    
-    const order = await client.execute(request);
-    res.json({ orderId: order.result.id });
-  } catch (error) {
-    console.error('Create order error:', error);
-    res.status(500).json({ message: 'Failed to create order' });
-  }
-});
-
-app.post('/api/payment/capture-order/:orderId', async (req, res) => {
-  try {
-    const { orderId } = req.params;
-    
-    const request = new paypal.orders.OrdersCaptureRequest(orderId);
-    const capture = await client.execute(request);
-    
-    res.json(capture.result);
-  } catch (error) {
-    console.error('Capture order error:', error);
-    res.status(500).json({ message: 'Failed to capture payment' });
   }
 });
 
