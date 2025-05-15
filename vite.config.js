@@ -3,7 +3,7 @@ import vue from '@vitejs/plugin-vue';
 
 export default defineConfig({
   plugins: [vue()],
-  base: '/testProj/',  // Replace with your repository name
+  base: '/testProj/',
   server: {
     port: 5173,
     proxy: {
