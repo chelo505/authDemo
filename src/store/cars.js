@@ -29,7 +29,7 @@ export default {
                 commit('SET_LOADING', true);
                 commit('SET_ERROR', null);
 
-                const response = await axios.get('http://localhost:3000/api/cars', {
+                const response = await axios.get('/api/cars', {
                     headers: {
                         'Authorization': `Bearer ${rootState.auth.token}`
                     }

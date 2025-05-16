@@ -41,7 +41,7 @@ export const auth = {
         commit('SET_LOADING', true);
         commit('SET_ERROR', null);
         
-        const response = await axios.post('http://localhost:3000/api/auth/login', credentials);
+        const response = await axios.post('/api/auth/login', credentials);
         
         commit('SET_USER', response.data.user);
         commit('SET_TOKEN', response.data.token);
@@ -60,7 +60,7 @@ export const auth = {
         commit('SET_LOADING', true);
         commit('SET_ERROR', null);
         
-        const response = await axios.post('http://localhost:3000/api/auth/register', userData);
+        const response = await axios.post('/api/auth/register', userData);
         
         commit('SET_USER', response.data.user);
         commit('SET_TOKEN', response.data.token);

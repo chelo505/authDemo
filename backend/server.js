@@ -5,14 +5,27 @@ const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const multer = require('multer');
-const upload = multer({dest: 'uploads/'});
+const path = require('path');
+
+// Configure multer for file uploads
+const upload = multer({
+  dest: 'uploads/',
+  limits: {
+    fileSize: 5 * 1024 * 1024 // 5MB limit
+  }
+});
+
 const Car = require('./models/Car');
 
 const app = express();
 
 // Middleware
 app.use(cors());
+
 app.use(express.json());
+
+// Serve uploaded files
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 const authMiddleware = async (req, res, next) => {
   try {
@@ -25,6 +38,7 @@ const authMiddleware = async (req, res, next) => {
   }
 };
 
+// Car routes
 app.post('/api/cars', authMiddleware, upload.array('images', 5), async (req, res) => {
   try {
     const { make, model, year, vinCode, price, description, mileage } = req.body;
@@ -54,13 +68,7 @@ app.post('/api/cars', authMiddleware, upload.array('images', 5), async (req, res
 app.get('/api/cars', async (req, res) => {
   try {
     const cars = await Car.find().sort({ createdAt: -1 });
-    
-    const carsWithStringIds = cars.map(car => ({
-      ...car.toObject(),
-      userId: car.userId.toString()
-    }));
-    
-    res.json(carsWithStringIds);
+    res.json(cars);
   } catch (error) {
     console.error('Error fetching cars:', error);
     res.status(500).json({ message: 'Server error' });
@@ -86,10 +94,6 @@ app.get('/api/cars/search', async (req, res) => {
   }
 });
 
-app.get('/api/cars/:id', async (req, res) => {
-  
-})
-
 app.get('/api/cars/user', authMiddleware, async (req, res) => {
   try {
     const cars = await Car.find({ userId: req.userId }).sort({ createdAt: -1 });
@@ -108,7 +112,7 @@ app.delete('/api/cars/:id', authMiddleware, async (req, res) => {
       return res.status(404).json({ message: 'Car not found or unauthorized' });
     }
 
-    await car.remove();
+    await car.deleteOne(); // Updated from remove() to deleteOne()
     res.json({ message: 'Car listing deleted successfully' });
   } catch (error) {
     console.error('Error deleting car:', error);
@@ -117,7 +121,7 @@ app.delete('/api/cars/:id', authMiddleware, async (req, res) => {
 });
 
 // MongoDB connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/payment-demo', {
+mongoose.connect(process.env.MONGODB_URL || 'mongodb://localhost:27017/test', {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
@@ -137,17 +141,14 @@ app.post('/api/auth/register', async (req, res) => {
   try {
     const { email, password } = req.body;
     
-    // Check if user exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: 'User already exists' });
     }
     
-    // Hash password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
     
-    // Create new user
     const user = new User({
       email,
       password: hashedPassword
@@ -155,7 +156,6 @@ app.post('/api/auth/register', async (req, res) => {
     
     await user.save();
     
-    // Generate JWT token
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
     
     res.json({ 
@@ -172,19 +172,16 @@ app.post('/api/auth/login', async (req, res) => {
   try {
     const { email, password } = req.body;
     
-    // Find user
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
     
-    // Verify password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
     
-    // Generate JWT token
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
     
     res.json({ 
