@@ -112,7 +112,7 @@ export default {
                 formData.append('images', image);
             });
             
-            const response = await axios.post('http://localhost:3000/api/cars', formData, {
+            const response = await axios.post('/api/cars', formData, {
                 headers: {
                     'Authorization': `Bearer ${this.$store.getters.token}`,
                     'Content-Type': 'multipart/form-data'

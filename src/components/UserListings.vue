@@ -117,7 +117,7 @@ export default defineComponent({
         this.loading = true;
         this.error = null;
         
-        const response = await axios.get('http://localhost:3000/api/cars', {
+        const response = await axios.get('/api/cars', {
           headers: {
             'Authorization': `Bearer ${this.token}`
           }
@@ -145,7 +145,7 @@ export default defineComponent({
       if (!confirm('Are you sure you want to delete this listing?')) return;
 
       try {
-        await axios.delete(`http://localhost:3000/api/cars/${carId}`, {
+        await axios.delete(`/api/cars/${carId}`, {
           headers: {
             'Authorization': `Bearer ${this.token}`
           }

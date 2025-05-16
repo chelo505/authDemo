@@ -66,7 +66,7 @@ export default {
     methods: {
         async fetchCars() {
             try {
-                const response = await axios.get('http://localhost:3000/cars');
+                const response = await axios.get('/api/cars');
                 this.cars = response.data;
             } catch (error) {
                 console.error('Error fetching cars:', error);
@@ -78,7 +78,7 @@ export default {
             }
 
             try {
-                const response = await axios.get(`http://localhost:3000/api/cars/search`, {
+                const response = await axios.get(`/api/cars/search`, {
                     params: {
                         query: this.searchQuery,
                         type: this.searchType
