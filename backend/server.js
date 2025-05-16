@@ -21,7 +21,6 @@ const app = express();
 
 // Middleware
 app.use(cors());
-
 app.use(express.json());
 
 // Serve uploaded files
@@ -121,7 +120,7 @@ app.delete('/api/cars/:id', authMiddleware, async (req, res) => {
 });
 
 // MongoDB connection
-mongoose.connect(process.env.MONGODB_URL || 'mongodb://localhost:27017/test', {
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/test', {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
