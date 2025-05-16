@@ -5,6 +5,9 @@ import store from '../store';
 const Login = () => import('../views/Login.vue');
 const Register = () => import('../views/Register.vue');
 const Dashboard = () => import('../views/Dashboard.vue');
+const CarSearch = () => import('../components/CarSearch.vue');
+const CarForm = () => import('../components/CarForm.vue');
+const UserListings = () => import('../components/UserListings.vue');
 
 const routes = [
   {
@@ -28,6 +31,23 @@ const routes = [
     name: 'Dashboard',
     component: Dashboard,
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/cars',
+    name: 'Cars',
+    component: CarSearch
+  },
+  {
+    path: '/cars/new',
+    name: 'NewCar',
+    component: CarForm,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/my-listings',
+    name: 'UserListings',
+    component: UserListings,
+    meta: { requiresAuth: true }
   }
 ];
 
@@ -38,12 +58,17 @@ const router = createRouter({
 
 // Navigation guards
 router.beforeEach((to, from, next) => {
-  const isAuthenticated = store.getters['auth/isAuthenticated'];
 
-  if (to.meta.requiresAuth && !isAuthenticated) {
-    next('/login');
-  } else if (to.meta.requiresGuest && isAuthenticated) {
-    next('/dashboard');
+  if (!store.state.auth.user && localStorage.getItem('token')) {
+    store.dispatch('auth/initAuth');
+  }
+  
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (!store.getters['auth/isAuthenticated']) {
+      next('/login');
+    } else {
+      next();
+    }
   } else {
     next();
   }

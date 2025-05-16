@@ -12,6 +12,25 @@
         >
           Dashboard
         </v-btn>
+
+        <v-list-item
+          to="/cars/new"
+        > 
+          MAKE A LISTING
+        </v-list-item>
+
+        <v-list-item
+          to="/cars"
+        >
+          SEARCH
+        </v-list-item>
+        
+        <v-list-item
+          to="/my-listings"
+         
+        >
+          MY LISTINGS
+        </v-list-item>
         
         <v-btn
           variant="text"
@@ -22,6 +41,12 @@
       </template>
       
       <template v-else>
+        <v-list-item
+          to="/cars"
+        >
+          SEARCH
+        </v-list-item>
+        
         <v-btn
           variant="text"
           :to="{ name: 'Login' }"
@@ -35,6 +60,7 @@
         >
           Register
         </v-btn>
+
       </template>
     </v-app-bar>
 

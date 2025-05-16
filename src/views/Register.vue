@@ -116,9 +116,7 @@ export default {
         });
         
         router.push('/dashboard');
-      } catch (error) {
-        // Error is handled by the store
-      }
+      } catch (error) {}
     };
     
     return {

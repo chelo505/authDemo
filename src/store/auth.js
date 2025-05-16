@@ -2,8 +2,9 @@ import axios from 'axios';
 
 export const auth = {
   namespaced: true,
+  
   state: {
-    user: null,
+    user: JSON.parse(localStorage.getItem('user')) || null,
     token: localStorage.getItem('token') || null,
     loading: false,
     error: null
@@ -12,6 +13,11 @@ export const auth = {
   mutations: {
     SET_USER(state, user) {
       state.user = user;
+      if (user) {
+        localStorage.setItem('user', JSON.stringify(user));
+      } else {
+        localStorage.removeItem('user');
+      }
     },
     SET_TOKEN(state, token) {
       state.token = token;
@@ -35,7 +41,7 @@ export const auth = {
         commit('SET_LOADING', true);
         commit('SET_ERROR', null);
         
-        const response = await axios.post('/api/auth/login', credentials);
+        const response = await axios.post('http://localhost:3000/api/auth/login', credentials);
         
         commit('SET_USER', response.data.user);
         commit('SET_TOKEN', response.data.token);
@@ -54,7 +60,7 @@ export const auth = {
         commit('SET_LOADING', true);
         commit('SET_ERROR', null);
         
-        const response = await axios.post('/api/auth/register', userData);
+        const response = await axios.post('http://localhost:3000/api/auth/register', userData);
         
         commit('SET_USER', response.data.user);
         commit('SET_TOKEN', response.data.token);
@@ -71,11 +77,21 @@ export const auth = {
     logout({ commit }) {
       commit('SET_USER', null);
       commit('SET_TOKEN', null);
+    },
+
+    initAuth({ commit, state }) {
+      const token = localStorage.getItem('token');
+      const user = JSON.parse(localStorage.getItem('user'));
+      
+      if (token && user) {
+        commit('SET_TOKEN', token);
+        commit('SET_USER', user);
+      }
     }
   },
   
   getters: {
-    isAuthenticated: state => !!state.token,
+    isAuthenticated: state => !!state.token && !!state.user,
     currentUser: state => state.user,
     authError: state => state.error,
     isLoading: state => state.loading
