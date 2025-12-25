@@ -21,13 +21,6 @@ The project follows a real-world client–server architecture and is deployed on
 - Express.js
 - MongoDB
 - REST APIs
-  
-## 📚 What I Learned
-- Building full-stack applications
-- Designing and consuming REST APIs
-- Frontend state handling in Vue.js
-- Backend authentication logic
-- Deployment and cloud hosting
 
 ## ▶️ How to Run Locally
 ### Backend
